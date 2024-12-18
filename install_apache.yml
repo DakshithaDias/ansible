@@ -4,24 +4,11 @@
   become: true
   tasks:
 
-  - name: update apt index
-    apt:
+  - name: Install apache package
+    package: 
+      name: "{{ apache_package }}"
+      state: latest
       update_cache: yes
-    when: ansible_distribution == "Ubuntu"
 
-  - name: install apache package
-    apt: 
-      name: apache2
-    when: ansible_distribution == "Ubuntu"
-
-  - name: update yum index
-    yum:
-      update_cache: yes
-    when: ansible_distribution == "CentOS"
-
-  - name: install httpd package
-    yum:
-      name: httpd
-    when: ansible_distribution == "CentOS"
 
 
