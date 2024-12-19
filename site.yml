@@ -1,0 +1,81 @@
+---
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: Install Package Updates (CentOS)
+    tags: always
+    yum:
+      update_only: yes
+      update_cache: yes
+      state: latest
+    when: ansible_distribution == "CentOS"
+
+
+  - name: Install Updates (Ubuntu)
+    tags: always
+    apt:
+      upgrade: dist
+      update_cache: yes
+      state: latest
+    when: ansible_distribution == "Ubuntu"
+
+
+
+- hosts: web_servers
+  become: true
+  tasks:
+
+  - name: Install apache on CentOS servers
+    tags: centos,apache,httpd
+    yum:
+      name: 
+      - httpd
+      state: latest
+    when: ansible_distribution == "CentOS"
+
+
+  - name: Install apache on Ubuntu Servers
+    tags: apache,ubuntu,apache2
+    apt:
+      name:
+        - apache2
+      state: latest
+    when: ansible_distribution == "Ubuntu"
+
+
+  - name: Copy Default Web Page
+    tags: httpd,apache,apache2
+    copy:
+      src: default_site.html
+      dest: /var/www/html/index.html
+      owner: root
+      group: root
+      mode: 0644
+
+
+
+- hosts: db_servers
+  become: true
+  tasks:
+
+  - name: Install MariaDB on CentOS servers
+    tags: mariadb,centos,db
+    yum:
+      name:
+      - mariadb-server
+      state: latest
+    when: ansible_distribution == "CentOS"
+
+
+
+  - name: Install MariaDB on Ubuntu Servers
+    tags: db,ubuntu,mariadb
+    apt:
+      name:
+      - mariadb-server
+      state: latest
+    when: ansible_distribution == "Ubuntu"
+ 
+
+
